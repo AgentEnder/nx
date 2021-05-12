@@ -182,7 +182,7 @@
     "open": "^7.4.2",
     "parse-markdown-links": "^1.0.4",
     "parse5": "4.0.0",
-    "postcss": "8.2.4",
+    "postcss": "8.2.10",
     "postcss-import": "14.0.0",
     "postcss-loader": "4.2.0",
     "precise-commits": "1.0.2",
