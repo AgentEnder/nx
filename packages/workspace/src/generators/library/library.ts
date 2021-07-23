@@ -48,9 +48,16 @@ function addProject(tree: Tree, options: NormalizedSchema) {
       executor: '@nrwl/workspace:tsc',
       outputs: ['{options.outputPath}'],
       options: {
-        outputPath: `dist/${libsDir}/${options.projectDirectory}`,
-        main: `${options.projectRoot}/src/index` + (options.js ? '.js' : '.ts'),
-        tsConfig: `${options.projectRoot}/tsconfig.lib.json`,
+        outputPath: joinPathFragments(
+          'dist',
+          libsDir,
+          options.projectDirectory
+        ),
+        main: joinPathFragments(
+          options.projectRoot,
+          `src/index + ${options.js ? '.js' : '.ts'}`
+        ),
+        tsConfig: joinPathFragments(options.projectRoot, 'tsconfig.lib.json'),
         assets: [`${options.projectRoot}/*.md`],
       },
     };
@@ -209,7 +216,7 @@ export const librarySchematic = convertNxGenerator(libraryGenerator);
 function normalizeOptions(tree: Tree, options: Schema): NormalizedSchema {
   const name = names(options.name).fileName;
   const projectDirectory = options.directory
-    ? `${names(options.directory).fileName}/${name}`
+    ? joinPathFragments(names(options.directory).fileName, name)
     : name;
 
   if (!options.unitTestRunner) {
@@ -228,7 +235,7 @@ function normalizeOptions(tree: Tree, options: Schema): NormalizedSchema {
 
   const { libsDir, npmScope } = getWorkspaceLayout(tree);
 
-  const projectRoot = `${libsDir}/${projectDirectory}`;
+  const projectRoot = joinPathFragments(libsDir, projectDirectory);
 
   const parsedTags = options.tags
     ? options.tags.split(',').map((s) => s.trim())

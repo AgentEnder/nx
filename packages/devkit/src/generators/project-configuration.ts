@@ -14,7 +14,7 @@ import {
   getWorkspaceLayout,
   getWorkspacePath,
 } from '../utils/get-workspace-layout';
-import { joinPathFragments } from '../utils/path';
+import { joinPathFragments, normalizePath } from '../utils/path';
 
 export type WorkspaceConfiguration = Omit<
   WorkspaceJsonConfiguration,
@@ -281,9 +281,9 @@ function addProjectToWorkspaceJson(
   validateWorkspaceJsonOperations(mode, workspaceJson, projectName);
 
   const configFile =
-    mode === 'create' && standalone
+    mode === 'create' && standalone // if we are creating standalone project create a path
       ? joinPathFragments(project.root, 'project.json')
-      : getProjectFileLocation(host, projectName);
+      : getProjectFileLocation(host, projectName); // otherwise check if a path is specified in workspace.json
 
   if (configFile) {
     if (mode === 'delete') {
@@ -293,7 +293,7 @@ function addProjectToWorkspaceJson(
       writeJson(host, configFile, project);
     }
     if (mode === 'create') {
-      workspaceJson.projects[projectName] = project.root;
+      workspaceJson.projects[projectName] = normalizePath(project.root);
     }
   } else {
     let workspaceConfiguration: ProjectConfiguration;

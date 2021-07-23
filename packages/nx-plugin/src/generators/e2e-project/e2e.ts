@@ -8,11 +8,12 @@ import {
   addProjectConfiguration,
   updateProjectConfiguration,
   offsetFromRoot,
+  joinPathFragments,
 } from '@nrwl/devkit';
 import type { Tree } from '@nrwl/devkit';
 import type { Schema } from './schema';
-import * as path from 'path';
 import { jestProjectGenerator } from '@nrwl/jest';
+import { join } from 'path';
 
 interface NormalizedSchema extends Schema {
   projectRoot: string;
@@ -26,8 +27,8 @@ function normalizeOptions(host: Tree, options: Schema): NormalizedSchema {
 
   const projectName = `${options.pluginName}-e2e`;
   const projectRoot = options.projectDirectory
-    ? path.join(appsDir, `${options.projectDirectory}-e2e`)
-    : path.join(appsDir, projectName);
+    ? joinPathFragments(appsDir, `${options.projectDirectory}-e2e`)
+    : joinPathFragments(appsDir, projectName);
   const pluginPropertyName = names(options.pluginName).propertyName;
 
   return {
@@ -48,7 +49,7 @@ function validatePlugin(host: Tree, pluginName: string) {
 }
 
 function addFiles(host: Tree, options: NormalizedSchema) {
-  generateFiles(host, path.join(__dirname, './files'), options.projectRoot, {
+  generateFiles(host, join(__dirname, './files'), options.projectRoot, {
     ...options,
     tmpl: '',
     offsetFromRoot: offsetFromRoot(options.projectRoot),
