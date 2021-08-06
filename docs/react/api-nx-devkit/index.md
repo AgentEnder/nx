@@ -97,6 +97,7 @@
 - [updateProjectConfiguration](../../react/nx-devkit/index#updateprojectconfiguration)
 - [updateTsConfigsToJs](../../react/nx-devkit/index#updatetsconfigstojs)
 - [updateWorkspaceConfiguration](../../react/nx-devkit/index#updateworkspaceconfiguration)
+- [updateWorkspaceJson](../../react/nx-devkit/index#updateworkspacejson)
 - [visitNotIgnoredFiles](../../react/nx-devkit/index#visitnotignoredfiles)
 - [writeJson](../../react/nx-devkit/index#writejson)
 - [writeJsonFile](../../react/nx-devkit/index#writejsonfile)
@@ -1500,6 +1501,23 @@ This does _not_ update projects configuration, use [updateProjectConfiguration](
 | :---------------- | :----------------------------------------------------------------------------- |
 | `tree`            | [`Tree`](../../react/nx-devkit/index#tree)                                     |
 | `workspaceConfig` | [`WorkspaceConfiguration`](../../react/nx-devkit/index#workspaceconfiguration) |
+
+#### Returns
+
+`void`
+
+---
+
+### updateWorkspaceJson
+
+▸ **updateWorkspaceJson**(`tree`, `updater`): `void`
+
+#### Parameters
+
+| Name      | Type                                                                                                                                                                                                |
+| :-------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tree`    | [`Tree`](../../react/nx-devkit/index#tree)                                                                                                                                                          |
+| `updater` | (`workspaceJson`: [`WorkspaceJsonConfiguration`](../../react/nx-devkit/index#workspacejsonconfiguration)) => [`WorkspaceJsonConfiguration`](../../react/nx-devkit/index#workspacejsonconfiguration) |
 
 #### Returns
 

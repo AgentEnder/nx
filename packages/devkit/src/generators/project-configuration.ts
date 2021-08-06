@@ -109,7 +109,7 @@ export function getProjects(
  * This does _not_ provide projects configuration, use {@link readProjectConfiguration} instead.
  */
 export function readWorkspaceConfiguration(tree: Tree): WorkspaceConfiguration {
-  const workspace = readWorkspace(tree);
+  const workspace = readRawWorkspaceJson(tree);
   delete workspace.projects;
 
   let nxJson = readNxJson(tree);
@@ -155,11 +155,9 @@ export function updateWorkspaceConfiguration(
   } = workspaceConfig;
   const workspace: Omit<Required<WorkspaceJsonConfiguration>, 'projects'> = {
     version,
-    cli,
     defaultProject,
-    generators,
   };
-  const nxJson: Omit<Required<NxJsonConfiguration>, 'projects'> = {
+  const nxJson: Required<NxJsonConfiguration> = {
     implicitDependencies,
     plugins,
     npmScope,
@@ -167,6 +165,8 @@ export function updateWorkspaceConfiguration(
     workspaceLayout,
     tasksRunnerOptions,
     affected,
+    cli,
+    generators,
   };
 
   updateJson<WorkspaceJsonConfiguration>(
@@ -276,7 +276,6 @@ function getProjectConfiguration(
 ): ProjectConfiguration & NxJsonProjectConfiguration {
   return {
     ...readWorkspaceSection(workspace, projectName),
-    ...(nxJson === null ? {} : readNxJsonSection(nxJson, projectName)),
   };
 }
 
@@ -287,10 +286,6 @@ function readWorkspaceSection(
   return workspace.projects[projectName];
 }
 
-function readNxJsonSection(nxJson: NxJsonConfiguration, projectName: string) {
-  return nxJson.projects?.[projectName];
-}
-
 function setProjectConfiguration(
   tree: Tree,
   projectName: string,
@@ -298,12 +293,7 @@ function setProjectConfiguration(
   mode: 'create' | 'update' | 'delete',
   standalone: boolean = false
 ): void {
-  const hasNxJson = tree.exists('nx.json');
-
   if (mode === 'delete') {
-    if (hasNxJson) {
-      addProjectToNxJson(tree, projectName, undefined, mode);
-    }
     addProjectToWorkspaceJson(tree, projectName, undefined, mode);
     return;
   }
@@ -321,19 +311,6 @@ function setProjectConfiguration(
     mode,
     standalone
   );
-
-  if (hasNxJson) {
-    const { tags, implicitDependencies } = projectConfiguration;
-    addProjectToNxJson(
-      tree,
-      projectName,
-      {
-        tags,
-        implicitDependencies,
-      },
-      mode
-    );
-  }
 }
 
 function addProjectToWorkspaceJson(
@@ -364,41 +341,15 @@ function addProjectToWorkspaceJson(
       workspaceJson.projects[projectName] = project.root;
     }
   } else {
-    let workspaceConfiguration: ProjectConfiguration;
-    if (project) {
-      const { tags, implicitDependencies, ...c } = project;
-      workspaceConfiguration = c;
-    }
-    workspaceJson.projects[projectName] = workspaceConfiguration;
+    workspaceJson.projects[projectName] = project;
   }
   writeJson(tree, path, workspaceJson);
 }
 
-function addProjectToNxJson(
-  tree: Tree,
-  projectName: string,
-  config: NxJsonProjectConfiguration,
-  mode: 'create' | 'update' | 'delete'
-) {
-  // distributed project files do not use nx.json,
-  // so only proceed if the project does not use them.
-  if (!getProjectFileLocation(tree, projectName)) {
-    const nxJson = readJson<NxJsonConfiguration>(tree, 'nx.json');
-    if (mode === 'delete') {
-      delete nxJson.projects[projectName];
-    } else {
-      nxJson.projects[projectName] = {
-        ...{
-          tags: [],
-        },
-        ...(config || {}),
-      };
-    }
-    writeJson(tree, 'nx.json', nxJson);
-  }
-}
-
-function readWorkspace(tree: Tree): WorkspaceJsonConfiguration {
+/**
+ * Read the workspace configuration, including projects.
+ */
+export function readWorkspace(tree: Tree): WorkspaceJsonConfiguration {
   const workspaceJson = inlineProjectConfigurationsWithTree(tree);
   const originalVersion = workspaceJson.version;
   return {
@@ -416,8 +367,7 @@ function readWorkspace(tree: Tree): WorkspaceJsonConfiguration {
 function inlineProjectConfigurationsWithTree(
   tree: Tree
 ): WorkspaceJsonConfiguration {
-  const path = getWorkspacePath(tree);
-  const workspaceJson = readJson<RawWorkspaceJsonConfiguration>(tree, path);
+  const workspaceJson = readRawWorkspaceJson(tree);
   Object.entries(workspaceJson.projects || {}).forEach(([project, config]) => {
     if (typeof config === 'string') {
       const configFileLocation = joinPathFragments(config, 'project.json');
@@ -429,19 +379,46 @@ function inlineProjectConfigurationsWithTree(
   return workspaceJson as WorkspaceJsonConfiguration;
 }
 
+function readRawWorkspaceJson(tree: Tree): RawWorkspaceJsonConfiguration {
+  const path = getWorkspacePath(tree);
+  return readJson<RawWorkspaceJsonConfiguration>(tree, path);
+}
+
 /**
  * @description Determine where a project's configuration is located.
  * @returns file path if separate from root config, null otherwise.
  */
 function getProjectFileLocation(tree: Tree, project: string): string | null {
-  const rawWorkspace = readJson<RawWorkspaceJsonConfiguration>(
-    tree,
-    getWorkspacePath(tree)
-  );
+  const rawWorkspace = readRawWorkspaceJson(tree)
   const projectConfig = rawWorkspace.projects?.[project];
   return typeof projectConfig === 'string'
     ? joinPathFragments(projectConfig, 'project.json')
     : null;
+}
+
+export function updateWorkspaceJson(
+  tree: Tree,
+  updater: (
+    workspaceJson: WorkspaceJsonConfiguration
+  ) => WorkspaceJsonConfiguration
+): void {
+  const rawWorkspaceJson = readRawWorkspaceJson(tree);
+  const resolvedWorkspaceJson = inlineProjectConfigurationsWithTree(tree);
+  const updatedWorkspaceJson: RawWorkspaceJsonConfiguration = updater(resolvedWorkspaceJson);
+  Object.entries(updatedWorkspaceJson.projects).forEach(
+    ([projectName, projectConfig]) => {
+      if (typeof rawWorkspaceJson.projects[projectName] === 'string' && typeof projectConfig !== 'string') {
+        if (
+          JSON.stringify(projectConfig) !==
+          JSON.stringify(resolvedWorkspaceJson.projects[projectName])
+        ) {
+          updateProjectConfiguration(tree, projectName, projectConfig);
+        }
+        updatedWorkspaceJson.projects[projectName] = rawWorkspaceJson.projects[projectName];
+      }
+    }
+  );
+  writeJson(tree, getWorkspacePath(tree), updatedWorkspaceJson);
 }
 
 function validateWorkspaceJsonOperations(

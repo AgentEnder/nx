@@ -1,6 +1,7 @@
 import type { Arguments } from 'yargs-parser';
 import { TargetConfiguration, WorkspaceJsonConfiguration } from './workspace';
 import { logger } from './logger';
+import { NxJsonConfiguration } from './nx';
 
 type PropertyDescription = {
   type?: string;
@@ -505,6 +506,7 @@ export async function combineOptionsForGenerator(
   commandLineOpts: Options,
   collectionName: string,
   generatorName: string,
+  nxConfig: NxJsonConfiguration | null,
   wc: WorkspaceJsonConfiguration | null,
   schema: Schema,
   isInteractive: boolean,
@@ -512,9 +514,10 @@ export async function combineOptionsForGenerator(
   relativeCwd: string | null,
   isVerbose = false
 ) {
-  const generatorDefaults = wc
+  const generatorDefaults = (wc || nxConfig)
     ? getGeneratorDefaults(
         defaultProjectName,
+        nxConfig,
         wc,
         collectionName,
         generatorName
@@ -597,30 +600,32 @@ export function convertSmartDefaultsIntoNamedParams(
 
 function getGeneratorDefaults(
   projectName: string | null,
-  wc: WorkspaceJsonConfiguration,
+  nxConfig: NxJsonConfiguration | null,
+  wc: WorkspaceJsonConfiguration | null,
   collectionName: string,
   generatorName: string
 ) {
   let defaults = {};
-  if (wc.generators) {
+  if (nxConfig?.generators) {
     if (
-      wc.generators[collectionName] &&
-      wc.generators[collectionName][generatorName]
+      nxConfig.generators[collectionName] &&
+      nxConfig.generators[collectionName][generatorName]
     ) {
       defaults = {
         ...defaults,
-        ...wc.generators[collectionName][generatorName],
+        ...nxConfig.generators[collectionName][generatorName],
       };
     }
-    if (wc.generators[`${collectionName}:${generatorName}`]) {
+    if (nxConfig.generators[`${collectionName}:${generatorName}`]) {
       defaults = {
         ...defaults,
-        ...wc.generators[`${collectionName}:${generatorName}`],
+        ...nxConfig.generators[`${collectionName}:${generatorName}`],
       };
     }
   }
   if (
     projectName &&
+    wc &&
     wc.projects[projectName] &&
     wc.projects[projectName].generators
   ) {

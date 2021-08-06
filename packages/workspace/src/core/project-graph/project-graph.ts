@@ -209,7 +209,7 @@ export function createProjectGraph(
   const cacheEnabled = process.env.NX_CACHE_PROJECT_GRAPH !== 'false';
   let cache = cacheEnabled ? readCache() : false;
   assertWorkspaceValidity(workspaceJson, nxJson);
-  const normalizedNxJson = normalizeNxJson(nxJson);
+  const normalizedNxJson = normalizeNxJson(nxJson, workspaceJson);
   const projectFileMap = createProjectFileMap(workspaceJson, workspaceFiles);
   const packageJsonDeps = readCombinedDeps();
   const rootTsConfig = readRootTsConfig();
@@ -320,7 +320,6 @@ function createContext(
   > = Object.keys(workspaceJson.projects).reduce((map, projectName) => {
     map[projectName] = {
       ...workspaceJson.projects[projectName],
-      ...nxJson.projects[projectName],
     };
     return map;
   }, {});

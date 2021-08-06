@@ -97,6 +97,7 @@
 - [updateProjectConfiguration](../../angular/nx-devkit/index#updateprojectconfiguration)
 - [updateTsConfigsToJs](../../angular/nx-devkit/index#updatetsconfigstojs)
 - [updateWorkspaceConfiguration](../../angular/nx-devkit/index#updateworkspaceconfiguration)
+- [updateWorkspaceJson](../../angular/nx-devkit/index#updateworkspacejson)
 - [visitNotIgnoredFiles](../../angular/nx-devkit/index#visitnotignoredfiles)
 - [writeJson](../../angular/nx-devkit/index#writejson)
 - [writeJsonFile](../../angular/nx-devkit/index#writejsonfile)
@@ -1500,6 +1501,23 @@ This does _not_ update projects configuration, use [updateProjectConfiguration](
 | :---------------- | :------------------------------------------------------------------------------- |
 | `tree`            | [`Tree`](../../angular/nx-devkit/index#tree)                                     |
 | `workspaceConfig` | [`WorkspaceConfiguration`](../../angular/nx-devkit/index#workspaceconfiguration) |
+
+#### Returns
+
+`void`
+
+---
+
+### updateWorkspaceJson
+
+▸ **updateWorkspaceJson**(`tree`, `updater`): `void`
+
+#### Parameters
+
+| Name      | Type                                                                                                                                                                                                    |
+| :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `tree`    | [`Tree`](../../angular/nx-devkit/index#tree)                                                                                                                                                            |
+| `updater` | (`workspaceJson`: [`WorkspaceJsonConfiguration`](../../angular/nx-devkit/index#workspacejsonconfiguration)) => [`WorkspaceJsonConfiguration`](../../angular/nx-devkit/index#workspacejsonconfiguration) |
 
 #### Returns
 
