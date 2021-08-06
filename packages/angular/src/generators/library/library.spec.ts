@@ -1,9 +1,10 @@
 import {
-  NxJsonConfiguration,
   readJson,
   Tree,
   updateJson,
   parseJson,
+  getProjects,
+  NxJsonConfiguration,
 } from '@nrwl/devkit';
 import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
 import { Linter } from '@nrwl/linter';
@@ -151,7 +152,7 @@ describe('lib', () => {
       expect(libProdConfig).toBeFalsy();
     });
 
-    it('should update nx.json', async () => {
+    it('should update tags', async () => {
       // ACT
       await runLibraryGeneratorWithOpts({
         publishable: false,
@@ -160,11 +161,11 @@ describe('lib', () => {
       });
 
       // ASSERT
-      const nxJson = readJson<NxJsonConfiguration>(appTree, '/nx.json');
-      expect(nxJson.projects).toEqual({
-        'my-lib': {
+      const projects = Object.fromEntries(getProjects(appTree));
+      expect(projects).toEqual({
+        'my-lib': expect.objectContaining({
           tags: ['one', 'two'],
-        },
+        }),
       });
     });
 
@@ -211,10 +212,10 @@ describe('lib', () => {
       });
     });
 
-    it('should check for existance of spec files before deleting them', async () => {
+    it('should check for existence of spec files before deleting them', async () => {
       // ARRANGE
-      updateJson(appTree, '/workspace.json', (workspaceJSON) => {
-        workspaceJSON.schematics = {
+      updateJson(appTree, '/nx.json', (nxJson) => {
+        nxJson.generators = {
           '@schematics/angular:service': {
             skipTests: true,
           },
@@ -223,7 +224,7 @@ describe('lib', () => {
           },
         };
 
-        return workspaceJSON;
+        return nxJson;
       });
 
       // ACT
@@ -369,7 +370,7 @@ describe('lib', () => {
   });
 
   describe('nested', () => {
-    it('should update nx.json', async () => {
+    it('should update tags', async () => {
       // ACT
       await runLibraryGeneratorWithOpts({ tags: 'one', directory: 'my-dir' });
       await runLibraryGeneratorWithOpts({
@@ -379,15 +380,15 @@ describe('lib', () => {
       });
 
       // ASSERT
-      const nxJson = readJson<NxJsonConfiguration>(appTree, '/nx.json');
+      const projects = Object.fromEntries(getProjects(appTree));
 
-      expect(nxJson.projects).toEqual({
-        'my-dir-my-lib': {
+      expect(projects).toEqual({
+        'my-dir-my-lib': expect.objectContaining({
           tags: ['one'],
-        },
-        'my-dir-my-lib2': {
+        }),
+        'my-dir-my-lib2': expect.objectContaining({
           tags: ['one', 'two'],
-        },
+        }),
       });
     });
 
@@ -1018,7 +1019,7 @@ describe('lib', () => {
         appTree,
         'libs/my-lib/tsconfig.json'
       );
-      const workspaceJson = readJson(appTree, 'workspace.json');
+      const { generators } = readJson<NxJsonConfiguration>(appTree, 'nx.json');
 
       // check that the TypeScript compiler options have been updated
       expect(compilerOptions.forceConsistentCasingInFileNames).toBe(true);
@@ -1033,7 +1034,7 @@ describe('lib', () => {
       // check to see if the workspace configuration has been updated to use strict
       // mode by default in future libraries
       expect(
-        workspaceJson.schematics['@nrwl/angular:library'].strict
+        generators['@nrwl/angular:library'].strict
       ).not.toBeDefined();
     });
 
@@ -1048,10 +1049,8 @@ describe('lib', () => {
       // ASSERT
       // check to see if the workspace configuration has been updated to turn off
       // strict mode by default in future libraries
-      const workspaceJson = readJson(appTree, 'workspace.json');
-      expect(workspaceJson.schematics['@nrwl/angular:library'].strict).toBe(
-        false
-      );
+      const { generators } = readJson<NxJsonConfiguration>(appTree, 'nx.json');
+      expect(generators['@nrwl/angular:library'].strict).toBe(false);
     });
   });
 
