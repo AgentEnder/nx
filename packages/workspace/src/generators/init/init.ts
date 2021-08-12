@@ -9,6 +9,7 @@ import {
   joinPathFragments,
   names,
   normalizePath,
+  NxJsonConfiguration,
   offsetFromRoot,
   readJson,
   readProjectConfiguration,
@@ -421,30 +422,22 @@ function moveExistingFiles(host: Tree, options: Schema) {
 }
 
 async function createAdditionalFiles(host: Tree, options: Schema) {
-  const workspaceJson = readJson(host, 'angular.json');
+  const nxJson: NxJsonConfiguration = {
+    npmScope: options.npmScope,
+    affected: {
+      defaultBase: `${options.defaultBase}` || deduceDefaultBase(),
+    },
+    implicitDependencies: {
+      'angular.json': '*',
+      'package.json': '*',
+      'tslint.json': '*',
+      '.eslintrc.json': '*',
+      'nx.json': '*',
+    }
+  }
   host.write(
     'nx.json',
-    serializeJson({
-      npmScope: options.npmScope,
-      affected: {
-        defaultBase: `${options.defaultBase}` || deduceDefaultBase(),
-      },
-      implicitDependencies: {
-        'angular.json': '*',
-        'package.json': '*',
-        'tslint.json': '*',
-        '.eslintrc.json': '*',
-        'nx.json': '*',
-      },
-      projects: {
-        [options.name]: {
-          tags: [],
-        },
-        [`${getE2eKey(workspaceJson)}-e2e`]: {
-          tags: [],
-        },
-      },
-    })
+    serializeJson(nxJson)
   );
   host.write('libs/.gitkeep', '');
 
@@ -543,7 +536,7 @@ function createNxJson(host: Tree) {
   const tsConfigPath = getRootTsConfigPath(host);
   host.write(
     'nx.json',
-    serializeJson({
+    serializeJson<NxJsonConfiguration>({
       npmScope: name,
       implicitDependencies: {
         'angular.json': '*',
@@ -552,11 +545,6 @@ function createNxJson(host: Tree) {
         'tslint.json': '*',
         '.eslintrc.json': '*',
         'nx.json': '*',
-      },
-      projects: {
-        [name]: {
-          tags: [],
-        },
       },
       tasksRunnerOptions: {
         default: {

@@ -37,9 +37,6 @@ describe('explicit package json dependencies', () => {
 
     const nxJson = {
       npmScope: 'proj',
-      projects: {
-        proj1: {},
-      },
     };
 
     fsJson = {
