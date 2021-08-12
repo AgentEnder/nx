@@ -82,6 +82,7 @@
 - [parseTargetString](../../node/nx-devkit/index#parsetargetstring)
 - [readJson](../../node/nx-devkit/index#readjson)
 - [readJsonFile](../../node/nx-devkit/index#readjsonfile)
+- [readNxJson](../../node/nx-devkit/index#readnxjson)
 - [readProjectConfiguration](../../node/nx-devkit/index#readprojectconfiguration)
 - [readTargetOptions](../../node/nx-devkit/index#readtargetoptions)
 - [readWorkspaceConfiguration](../../node/nx-devkit/index#readworkspaceconfiguration)
@@ -541,8 +542,8 @@ Callback to install dependencies only if necessary. undefined is returned if cha
 
 Adds project configuration to the Nx workspace.
 
-The project configuration is stored in workspace.json and nx.json. The utility will update
-both files.
+The project configuration is stored in workspace.json or the associated project.json file.
+The utility will update either files.
 
 #### Parameters
 
@@ -1125,14 +1126,30 @@ Object the JSON content of the file represents
 
 ---
 
+### readNxJson
+
+▸ **readNxJson**(`tree`): [`NxJsonConfiguration`](../../node/nx-devkit/index#nxjsonconfiguration) \| `null`
+
+#### Parameters
+
+| Name   | Type                                      |
+| :----- | :---------------------------------------- |
+| `tree` | [`Tree`](../../node/nx-devkit/index#tree) |
+
+#### Returns
+
+[`NxJsonConfiguration`](../../node/nx-devkit/index#nxjsonconfiguration) \| `null`
+
+---
+
 ### readProjectConfiguration
 
 ▸ **readProjectConfiguration**(`tree`, `projectName`): [`ProjectConfiguration`](../../node/nx-devkit/index#projectconfiguration) & [`NxJsonProjectConfiguration`](../../node/nx-devkit/index#nxjsonprojectconfiguration)
 
 Reads a project configuration.
 
-The project configuration is stored in workspace.json and nx.json. The utility will read
-both files.
+The project configuration is stored in workspace.json or the associated project.json file.
+The utility will read from either file.
 
 **`throws`** If supplied projectName cannot be found
 
@@ -1233,8 +1250,8 @@ Callback to uninstall dependencies only if necessary. undefined is returned if c
 
 Removes the configuration of an existing project.
 
-The project configuration is stored in workspace.json and nx.json.
-The utility will update both files.
+The project configuration is stored in workspace.json or the associated project.json file.
+The utility will update either file.
 
 #### Parameters
 
@@ -1452,8 +1469,8 @@ Updates a JSON value to the file system tree
 
 Updates the configuration of an existing project.
 
-The project configuration is stored in workspace.json and nx.json. The utility will update
-both files.
+The project configuration is stored in workspace.json or the associated project.json file.
+The utility will update either files.
 
 #### Parameters
 
