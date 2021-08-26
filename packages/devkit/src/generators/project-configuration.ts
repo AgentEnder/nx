@@ -15,7 +15,6 @@ import { joinPathFragments } from '../utils/path';
 import type { Tree } from '@nrwl/tao/src/shared/tree';
 import type {
   NxJsonConfiguration,
-  NxJsonProjectConfiguration,
 } from '@nrwl/tao/src/shared/nx';
 
 export type WorkspaceConfiguration = Omit<
@@ -38,7 +37,7 @@ export type WorkspaceConfiguration = Omit<
 export function addProjectConfiguration(
   tree: Tree,
   projectName: string,
-  projectConfiguration: ProjectConfiguration & NxJsonProjectConfiguration,
+  projectConfiguration: ProjectConfiguration,
   standalone: boolean = false
 ): void {
   standalone = standalone || getWorkspaceLayout(tree).standaloneAsDefault;
@@ -64,7 +63,7 @@ export function addProjectConfiguration(
 export function updateProjectConfiguration(
   tree: Tree,
   projectName: string,
-  projectConfiguration: ProjectConfiguration & NxJsonProjectConfiguration
+  projectConfiguration: ProjectConfiguration,
 ): void {
   setProjectConfiguration(tree, projectName, projectConfiguration, 'update');
 }
@@ -89,7 +88,7 @@ export function removeProjectConfiguration(
  */
 export function getProjects(
   tree: Tree
-): Map<string, ProjectConfiguration & NxJsonProjectConfiguration> {
+): Map<string, ProjectConfiguration> {
   const workspace = readWorkspace(tree);
   const nxJson = readNxJson(tree);
 
@@ -97,7 +96,7 @@ export function getProjects(
     Object.keys(workspace.projects || {}).map((projectName) => {
       return [
         projectName,
-        getProjectConfiguration(projectName, workspace, nxJson),
+        getProjectConfiguration(projectName, workspace),
       ];
     })
   );
@@ -226,7 +225,7 @@ function readNxJsonExtends(tree: Tree, nxJson: { extends?: string }) {
 export function readProjectConfiguration(
   tree: Tree,
   projectName: string
-): ProjectConfiguration & NxJsonProjectConfiguration {
+): ProjectConfiguration {
   const workspace = readWorkspace(tree);
   if (!workspace.projects[projectName]) {
     throw new Error(
@@ -238,7 +237,7 @@ export function readProjectConfiguration(
 
   const nxJson = readNxJson(tree);
 
-  return getProjectConfiguration(projectName, workspace, nxJson);
+  return getProjectConfiguration(projectName, workspace);
 }
 
 export function readNxJson(tree: Tree): NxJsonConfiguration | null {
@@ -272,8 +271,7 @@ export function isStandaloneProject(tree: Tree, project: string): boolean {
 function getProjectConfiguration(
   projectName: string,
   workspace: WorkspaceJsonConfiguration,
-  nxJson: NxJsonConfiguration | null
-): ProjectConfiguration & NxJsonProjectConfiguration {
+): ProjectConfiguration {
   return {
     ...readWorkspaceSection(workspace, projectName),
   };
@@ -289,7 +287,7 @@ function readWorkspaceSection(
 function setProjectConfiguration(
   tree: Tree,
   projectName: string,
-  projectConfiguration: ProjectConfiguration & NxJsonProjectConfiguration,
+  projectConfiguration: ProjectConfiguration,
   mode: 'create' | 'update' | 'delete',
   standalone: boolean = false
 ): void {
@@ -316,7 +314,7 @@ function setProjectConfiguration(
 function addProjectToWorkspaceJson(
   tree: Tree,
   projectName: string,
-  project: ProjectConfiguration & NxJsonProjectConfiguration,
+  project: ProjectConfiguration,
   mode: 'create' | 'update' | 'delete',
   standalone: boolean = false
 ) {
@@ -372,7 +370,7 @@ function inlineProjectConfigurationsWithTree(
     if (typeof config === 'string') {
       const configFileLocation = joinPathFragments(config, 'project.json');
       workspaceJson.projects[project] = readJson<
-        ProjectConfiguration & NxJsonProjectConfiguration
+        ProjectConfiguration
       >(tree, configFileLocation);
     }
   });
