@@ -13,9 +13,7 @@ import { readJson, updateJson, writeJson } from '../utils/json';
 import { joinPathFragments } from '../utils/path';
 
 import type { Tree } from '@nrwl/tao/src/shared/tree';
-import type {
-  NxJsonConfiguration,
-} from '@nrwl/tao/src/shared/nx';
+import type { NxJsonConfiguration } from '@nrwl/tao/src/shared/nx';
 
 export type WorkspaceConfiguration = Omit<
   WorkspaceJsonConfiguration,
@@ -63,7 +61,7 @@ export function addProjectConfiguration(
 export function updateProjectConfiguration(
   tree: Tree,
   projectName: string,
-  projectConfiguration: ProjectConfiguration,
+  projectConfiguration: ProjectConfiguration
 ): void {
   setProjectConfiguration(tree, projectName, projectConfiguration, 'update');
 }
@@ -86,18 +84,13 @@ export function removeProjectConfiguration(
  *
  * Use {@link readProjectConfiguration} if only one project is needed.
  */
-export function getProjects(
-  tree: Tree
-): Map<string, ProjectConfiguration> {
+export function getProjects(tree: Tree): Map<string, ProjectConfiguration> {
   const workspace = readWorkspace(tree);
   const nxJson = readNxJson(tree);
 
   return new Map(
     Object.keys(workspace.projects || {}).map((projectName) => {
-      return [
-        projectName,
-        getProjectConfiguration(projectName, workspace),
-      ];
+      return [projectName, getProjectConfiguration(projectName, workspace)];
     })
   );
 }
@@ -270,7 +263,7 @@ export function isStandaloneProject(tree: Tree, project: string): boolean {
 
 function getProjectConfiguration(
   projectName: string,
-  workspace: WorkspaceJsonConfiguration,
+  workspace: WorkspaceJsonConfiguration
 ): ProjectConfiguration {
   return {
     ...readWorkspaceSection(workspace, projectName),
@@ -369,9 +362,10 @@ function inlineProjectConfigurationsWithTree(
   Object.entries(workspaceJson.projects || {}).forEach(([project, config]) => {
     if (typeof config === 'string') {
       const configFileLocation = joinPathFragments(config, 'project.json');
-      workspaceJson.projects[project] = readJson<
-        ProjectConfiguration
-      >(tree, configFileLocation);
+      workspaceJson.projects[project] = readJson<ProjectConfiguration>(
+        tree,
+        configFileLocation
+      );
     }
   });
   return workspaceJson as WorkspaceJsonConfiguration;
