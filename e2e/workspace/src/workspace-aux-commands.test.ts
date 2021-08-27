@@ -643,7 +643,6 @@ describe('Move Angular Project', () => {
     expect(moveOutput).toContain(
       `CREATE apps/${newPath}/src/environments/environment.ts`
     );
-    expect(moveOutput).toContain(`UPDATE nx.json`);
     expect(moveOutput).toContain(`UPDATE workspace.json`);
   });
 
@@ -763,11 +762,11 @@ describe('Move Project', () => {
      */
 
     runCLI(`generate @nrwl/workspace:lib ${lib3}`);
-    let nxJson = JSON.parse(
+    let workspaceJson = JSON.parse(
       readFile('workspace.json')
     ) as WorkspaceJsonConfiguration;
-    nxJson.projects[lib3].implicitDependencies = [`${lib1}-data-access`];
-    updateFile(`nx.json`, JSON.stringify(nxJson));
+    workspaceJson.projects[lib3].implicitDependencies = [`${lib1}-data-access`];
+    updateFile(`workspace.json`, JSON.stringify(workspaceJson));
 
     /**
      * Now try to move lib1
@@ -823,15 +822,14 @@ describe('Move Project', () => {
     expect(moveOutput).toContain(`CREATE ${rootClassPath}`);
     checkFilesExist(rootClassPath);
 
-    expect(moveOutput).toContain('UPDATE nx.json');
-    nxJson = JSON.parse(
+    workspaceJson = JSON.parse(
       readFile('workspace.json')
     ) as WorkspaceJsonConfiguration;
-    expect(nxJson.projects[`${lib1}-data-access`]).toBeUndefined();
-    expect(nxJson.projects[newName]).toEqual({
+    expect(workspaceJson.projects[`${lib1}-data-access`]).toBeUndefined();
+    expect(workspaceJson.projects[newName]).toMatchObject({
       tags: [],
     });
-    expect(nxJson.projects[lib3].implicitDependencies).toEqual([
+    expect(workspaceJson.projects[lib3].implicitDependencies).toEqual([
       `shared-${lib1}-data-access`,
     ]);
 
@@ -845,7 +843,7 @@ describe('Move Project', () => {
     ).toEqual([`libs/shared/${lib1}/data-access/src/index.ts`]);
 
     expect(moveOutput).toContain(`UPDATE workspace.json`);
-    const workspaceJson = readJson(`workspace.json`);
+    workspaceJson = readJson(`workspace.json`);
     expect(workspaceJson.projects[`${lib1}-data-access`]).toBeUndefined();
     const project = workspaceJson.projects[newName];
     expect(project).toBeTruthy();
@@ -904,7 +902,7 @@ describe('Move Project', () => {
 
     runCLI(`generate @nrwl/workspace:lib ${lib3}`);
     let workspaceJson = JSON.parse(
-      readFile('workspace].json')
+      readFile('workspace.json')
     ) as WorkspaceJsonConfiguration;
     workspaceJson.projects[lib3].implicitDependencies = [`${lib1}-data-access`];
     updateFile(`nx.json`, JSON.stringify(workspaceJson));
@@ -1038,9 +1036,9 @@ describe('Move Project', () => {
      */
 
     runCLI(`generate @nrwl/workspace:lib ${lib3}`);
-    nxJson = JSON.parse(readFile('nx.json')) as NxJsonConfiguration;
-    nxJson.projects[lib3].implicitDependencies = [`${lib1}-data-access`];
-    updateFile(`nx.json`, JSON.stringify(nxJson));
+    let workspaceJson = JSON.parse(readFile('workspace.json')) as WorkspaceJsonConfiguration;
+    workspaceJson.projects[lib3].implicitDependencies = [`${lib1}-data-access`];
+    updateFile(`workspace.json`, JSON.stringify(workspaceJson));
 
     /**
      * Now try to move lib1
@@ -1106,7 +1104,7 @@ describe('Move Project', () => {
     ).toEqual([`packages/shared/${lib1}/data-access/src/index.ts`]);
 
     expect(moveOutput).toContain(`UPDATE workspace.json`);
-    const workspaceJson = readJson(`workspace.json`);
+    workspaceJson = readJson(`workspace.json`);
     expect(workspaceJson.projects[`${lib1}-data-access`]).toBeUndefined();
     const project = workspaceJson.projects[newName];
     expect(project).toBeTruthy();
@@ -1183,7 +1181,7 @@ describe('Remove Project', () => {
     expect(removeOutputForced).toContain(`DELETE libs/${lib1}`);
     expect(exists(tmpProjPath(`libs/${lib1}`))).toBeFalsy();
 
-    expect(removeOutputForced).toContain(`UPDATE nx.json`);
+    expect(removeOutputForced).not.toContain(`UPDATE nx.json`);
     workspaceJson = JSON.parse(
       readFile('nx.json')
     ) as WorkspaceJsonConfiguration;

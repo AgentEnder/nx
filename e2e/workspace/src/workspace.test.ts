@@ -571,8 +571,6 @@ describe('affected (with git)', () => {
 
     delete workspaceJson.projects[mylib];
     updateFile(workspaceConfigName(), JSON.stringify(workspaceJson));
-    delete nxJson.projects[mylib];
-    updateFile('nx.json', JSON.stringify(nxJson));
 
     expect(runCLI('affected:apps')).toContain(myapp);
     expect(runCLI('affected:apps')).toContain(myapp2);
