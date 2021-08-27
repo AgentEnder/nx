@@ -85,6 +85,7 @@
 - [readNxJson](../../node/nx-devkit/index#readnxjson)
 - [readProjectConfiguration](../../node/nx-devkit/index#readprojectconfiguration)
 - [readTargetOptions](../../node/nx-devkit/index#readtargetoptions)
+- [readWorkspace](../../node/nx-devkit/index#readworkspace)
 - [readWorkspaceConfiguration](../../node/nx-devkit/index#readworkspaceconfiguration)
 - [removeDependenciesFromPackageJson](../../node/nx-devkit/index#removedependenciesfrompackagejson)
 - [removeProjectConfiguration](../../node/nx-devkit/index#removeprojectconfiguration)
@@ -97,8 +98,8 @@
 - [updateJson](../../node/nx-devkit/index#updatejson)
 - [updateProjectConfiguration](../../node/nx-devkit/index#updateprojectconfiguration)
 - [updateTsConfigsToJs](../../node/nx-devkit/index#updatetsconfigstojs)
+- [updateWorkspace](../../node/nx-devkit/index#updateworkspace)
 - [updateWorkspaceConfiguration](../../node/nx-devkit/index#updateworkspaceconfiguration)
-- [updateWorkspaceJson](../../node/nx-devkit/index#updateworkspacejson)
 - [visitNotIgnoredFiles](../../node/nx-devkit/index#visitnotignoredfiles)
 - [writeJson](../../node/nx-devkit/index#writejson)
 - [writeJsonFile](../../node/nx-devkit/index#writejsonfile)
@@ -1195,6 +1196,24 @@ Works as if you invoked the target yourself without passing any command lint ove
 
 ---
 
+### readWorkspace
+
+▸ **readWorkspace**(`tree`): [`WorkspaceJsonConfiguration`](../../node/nx-devkit/index#workspacejsonconfiguration)
+
+Read the workspace configuration, including projects.
+
+#### Parameters
+
+| Name   | Type                                      |
+| :----- | :---------------------------------------- |
+| `tree` | [`Tree`](../../node/nx-devkit/index#tree) |
+
+#### Returns
+
+[`WorkspaceJsonConfiguration`](../../node/nx-devkit/index#workspacejsonconfiguration)
+
+---
+
 ### readWorkspaceConfiguration
 
 ▸ **readWorkspaceConfiguration**(`tree`): [`WorkspaceConfiguration`](../../node/nx-devkit/index#workspaceconfiguration)
@@ -1506,6 +1525,23 @@ The utility will update either files.
 
 ---
 
+### updateWorkspace
+
+▸ **updateWorkspace**(`tree`, `workspaceJson`): `void`
+
+#### Parameters
+
+| Name            | Type                                                                                  |
+| :-------------- | :------------------------------------------------------------------------------------ |
+| `tree`          | [`Tree`](../../node/nx-devkit/index#tree)                                             |
+| `workspaceJson` | [`WorkspaceJsonConfiguration`](../../node/nx-devkit/index#workspacejsonconfiguration) |
+
+#### Returns
+
+`void`
+
+---
+
 ### updateWorkspaceConfiguration
 
 ▸ **updateWorkspaceConfiguration**(`tree`, `workspaceConfig`): `void`
@@ -1520,23 +1556,6 @@ This does _not_ update projects configuration, use [updateProjectConfiguration](
 | :---------------- | :---------------------------------------------------------------------------- |
 | `tree`            | [`Tree`](../../node/nx-devkit/index#tree)                                     |
 | `workspaceConfig` | [`WorkspaceConfiguration`](../../node/nx-devkit/index#workspaceconfiguration) |
-
-#### Returns
-
-`void`
-
----
-
-### updateWorkspaceJson
-
-▸ **updateWorkspaceJson**(`tree`, `updater`): `void`
-
-#### Parameters
-
-| Name      | Type                                                                                                                                                                                              |
-| :-------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `tree`    | [`Tree`](../../node/nx-devkit/index#tree)                                                                                                                                                         |
-| `updater` | (`workspaceJson`: [`WorkspaceJsonConfiguration`](../../node/nx-devkit/index#workspacejsonconfiguration)) => [`WorkspaceJsonConfiguration`](../../node/nx-devkit/index#workspacejsonconfiguration) |
 
 #### Returns
 
