@@ -147,7 +147,6 @@ export function updateWorkspaceConfiguration(
   } = workspaceConfig;
   const workspace: Omit<Required<WorkspaceJsonConfiguration>, 'projects'> = {
     version,
-    defaultProject,
   };
   const nxJson: Required<NxJsonConfiguration> = {
     implicitDependencies,
@@ -159,6 +158,7 @@ export function updateWorkspaceConfiguration(
     affected,
     cli,
     generators,
+    defaultProject,
   };
 
   updateJson<WorkspaceJsonConfiguration>(
