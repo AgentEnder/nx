@@ -247,6 +247,63 @@ describe('format', () => {
       );
     }
   }, 90000);
+
+  it('should move properties from workspace.json to nx.json', async () => {
+    const oldWorkspaceJson = {
+      version: 2,
+      projects: {
+        a: { root: 'apps/a' },
+      },
+      cli: {
+        defaultCollection: '@nrwl/workspace',
+      },
+      generators: {
+        '@nrwl/angular': {
+          test: true,
+        },
+      },
+      defaultProject: 'a',
+    };
+    updateFile('workspace.json', JSON.stringify(oldWorkspaceJson));
+
+    const oldNxJson = {
+      npmScope: 'sample',
+      affected: {
+        defaultBase: 'master',
+      },
+      tasksRunnerOptions: {
+        default: {
+          runner: '@nrwl/workspace/tasks-runners/default',
+          options: {
+            cacheableOperations: ['build', 'lint', 'test', 'e2e'],
+          },
+        },
+      },
+      projects: {
+        a: {
+          tags: ['hello'],
+          implicitDependencies: [],
+        },
+      },
+    };
+    updateFile('nx.json', JSON.stringify(oldNxJson));
+
+    runCLI('format');
+    const newNxJson = readJson('nx.json');
+    const newWorkspaceJson = readJson('workspace.json');
+
+    expect(newNxJson.projects).not.toBeDefined();
+    expect(newNxJson.generators).toEqual(oldWorkspaceJson.generators);
+    expect(newNxJson.cli).toEqual(oldWorkspaceJson.cli);
+    expect(newNxJson.defaultProject).toEqual(oldWorkspaceJson.defaultProject);
+    expect(newWorkspaceJson.projects.a).toEqual({
+      ...oldNxJson.projects.a,
+      ...oldWorkspaceJson.projects.a,
+    });
+    expect(newWorkspaceJson.cli).not.toBeDefined();
+    expect(newWorkspaceJson.generators).not.toBeDefined();
+    expect(newWorkspaceJson.defaultProject).not.toBeDefined();
+  });
 });
 
 describe('workspace-generator', () => {
