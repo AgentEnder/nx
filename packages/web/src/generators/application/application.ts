@@ -7,7 +7,6 @@ import {
   getWorkspaceLayout,
   joinPathFragments,
   names,
-  NxJsonProjectConfiguration,
   offsetFromRoot,
   ProjectConfiguration,
   readWorkspaceConfiguration,
@@ -138,7 +137,7 @@ function addServeTarget(
 
 function addProject(tree: Tree, options: NormalizedSchema) {
   const targets: Record<string, TargetConfiguration> = {};
-  let project: ProjectConfiguration & NxJsonProjectConfiguration = {
+  let project: ProjectConfiguration = {
     projectType: 'application',
     root: options.appProjectRoot,
     sourceRoot: joinPathFragments(options.appProjectRoot, 'src'),

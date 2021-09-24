@@ -6,7 +6,6 @@ import {
 import type {
   FileData,
   NxJsonConfiguration,
-  NxJsonProjectConfiguration,
   ProjectGraphNode,
 } from '@nrwl/devkit';
 import { execSync } from 'child_process';

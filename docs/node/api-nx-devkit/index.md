@@ -200,7 +200,7 @@ Nx.json configuration
 
 • **NxJsonProjectConfiguration**: `Object`
 
-**`deprecated(2021-08-26):`** NxJson no longer contains projects
+**`deprecated(v14):`** nx.json no longer contains projects
 
 ---
 

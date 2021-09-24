@@ -2,7 +2,6 @@ import {
   FileData,
   logger,
   NxJsonConfiguration,
-  NxJsonProjectConfiguration,
   NxPlugin,
   ProjectConfiguration,
   ProjectFileMap,
@@ -317,10 +316,9 @@ function createContext(
   fileMap: ProjectFileMap,
   filesToProcess: ProjectFileMap
 ): ProjectGraphProcessorContext {
-  const projects: Record<
-    string,
-    ProjectConfiguration & NxJsonProjectConfiguration
-  > = Object.keys(workspaceJson.projects).reduce((map, projectName) => {
+  const projects: Record<string, ProjectConfiguration> = Object.keys(
+    workspaceJson.projects
+  ).reduce((map, projectName) => {
     map[projectName] = {
       ...workspaceJson.projects[projectName],
     };
