@@ -21,6 +21,7 @@ import {
   writeJsonFile,
 } from '@nrwl/devkit';
 import { sortObjectByKeys } from '@nrwl/tao/src/utils/object-sort';
+import { existsSync } from 'fs';
 
 const PRETTIER_PATH = require.resolve('prettier/bin-prettier');
 
@@ -43,7 +44,9 @@ export async function format(
       sortWorkspaceJson();
       sortTsConfig();
       movePropertiesToNewLocations();
-      chunkList.push([workspaceJsonPath, 'nx.json', 'tsconfig.base.json']);
+      const chunk = ['nx.json', 'tsconfig.base.json'];
+      if (existsSync(workspaceJsonPath)) chunk.push(workspaceJsonPath);
+      chunkList.push(chunk);
       chunkList.forEach((chunk) => write(chunk));
       break;
     case 'check':

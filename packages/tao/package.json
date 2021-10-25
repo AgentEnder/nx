@@ -39,6 +39,7 @@
     "jsonc-parser": "3.0.0",
     "tmp": "~0.2.1",
     "tslib": "^2.0.0",
-    "yargs-parser": "20.0.0"
+    "yargs-parser": "20.0.0",
+    "ignore": "^5.0.4"
   }
 }
