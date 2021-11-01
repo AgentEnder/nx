@@ -323,7 +323,7 @@ function addProjectToWorkspaceJson(
   );
 
   const configFile =
-    (mode === 'create' && standalone || !path)
+    (mode === 'create' && standalone) || !path
       ? joinPathFragments(project.root, 'project.json')
       : getProjectFileLocation(tree, projectName);
 
