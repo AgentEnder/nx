@@ -2,7 +2,7 @@ export function isCI() {
   return (
     process.env.CI === 'true' ||
     process.env.TF_BUILD === 'true' ||
-    process.env['bamboo.buildKey'] ||
+    process.env.bamboo_planKey ||
     process.env.BUILDKITE === 'true' ||
     process.env.CIRCLECI === 'true' ||
     process.env.CIRRUS_CI === 'true' ||
