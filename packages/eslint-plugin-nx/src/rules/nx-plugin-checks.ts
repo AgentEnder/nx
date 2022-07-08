@@ -34,7 +34,6 @@ const DEFAULT_OPTIONS: Options[0] = {
 };
 
 export type MessageIds =
-  | 'missingRequiredSchema'
   | 'invalidSchemaPath'
   | 'missingImplementation'
   | 'invalidImplementationPath'
@@ -71,7 +70,6 @@ export default createESLintRule<Options, MessageIds>({
       noExecutorsOrBuildersFound:
         'Unable to find `executors` or `builders` property',
       valueShouldBeObject: '{{ key }} should be an object',
-      missingRequiredSchema: '{{ key }}: Missing required property - `schema`',
       missingImplementation:
         '{{ key }}: Missing required property - `implementation`',
       missingVersion: '{{ key }}: Missing required property - `version`',
@@ -243,15 +241,7 @@ export function validateEntry(
   const schemaNode = baseNode.properties.find(
     (x) => x.key.type === 'JSONLiteral' && x.key.value === 'schema'
   );
-  if (mode !== 'migration' && !schemaNode) {
-    context.report({
-      messageId: 'missingRequiredSchema',
-      data: {
-        key,
-      },
-      node: baseNode as any,
-    });
-  } else if (schemaNode) {
+  if (schemaNode) {
     if (
       schemaNode.value.type !== 'JSONLiteral' ||
       typeof schemaNode.value.value !== 'string'

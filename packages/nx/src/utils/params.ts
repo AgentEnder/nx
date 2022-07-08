@@ -56,6 +56,8 @@ type Properties = {
 export type Schema = {
   properties: Properties;
   required?: string[];
+  cli?: 'nx' | 'ng';
+  title?: string;
   description?: string;
   definitions?: Properties;
   additionalProperties?: boolean;

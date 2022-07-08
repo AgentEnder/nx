@@ -27,6 +27,7 @@ import {
 } from './misc-interfaces';
 import { PackageJson } from '../utils/package-json';
 import { sortObjectByKeys } from 'nx/src/utils/object-sort';
+import { Schema } from '../utils/params';
 
 export function workspaceConfigName(root: string) {
   if (existsSync(path.join(root, 'angular.json'))) {
@@ -177,6 +178,16 @@ export class Workspaces {
     }
   }
 
+  readSchemaFile(baseDirectory: string, schemaPath: string): Schema {
+    if (schemaPath) {
+      return readJsonFile(path.join(baseDirectory, schemaPath));
+    }
+    return {
+      cli: 'nx',
+      properties: {},
+    };
+  }
+
   readGenerator(collectionName: string, generatorName: string) {
     try {
       const {
@@ -189,11 +200,12 @@ export class Workspaces {
       const generatorConfig =
         generatorsJson.generators?.[normalizedGeneratorName] ||
         generatorsJson.schematics?.[normalizedGeneratorName];
-      const schemaPath = path.join(generatorsDir, generatorConfig.schema || '');
-      const schema = readJsonFile(schemaPath);
+
+      const schema = this.readSchemaFile(generatorsDir, generatorConfig.schema);
       if (!schema.properties || typeof schema.properties !== 'object') {
         schema.properties = {};
       }
+
       generatorConfig.implementation =
         generatorConfig.implementation || generatorConfig.factory;
       const implementationFactory = this.getImplementationFactory<Generator>(
