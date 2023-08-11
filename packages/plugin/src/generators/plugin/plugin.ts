@@ -5,9 +5,11 @@ import {
   generateFiles,
   GeneratorCallback,
   normalizePath,
+  readNxJson,
   readProjectConfiguration,
   runTasksInSerial,
   Tree,
+  updateNxJson,
   updateProjectConfiguration,
 } from '@nx/devkit';
 import { libraryGenerator as jsLibraryGenerator } from '@nx/js';
@@ -91,6 +93,11 @@ export async function pluginGenerator(host: Tree, schema: Schema) {
   if (options.bundler === 'tsc') {
     tasks.push(addTsLibDependencies(host));
   }
+
+  const nxJson = readNxJson(host);
+  nxJson.plugins ??= [];
+  nxJson.plugins.push('@nx/plugin');
+  updateNxJson(host, nxJson);
 
   tasks.push(
     addDependenciesToPackageJson(
