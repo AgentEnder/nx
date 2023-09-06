@@ -46,6 +46,8 @@ import { CreateProjectJsonProjectsPlugin } from '../plugins/project-json/build-n
 
 /**
  * Context for {@link CreateNodesFunction}
+ *
+ * ** Experimental: ** these APIs may experience breaking changes outside of major versions.
  */
 export interface CreateNodesContext {
   readonly nxJsonConfiguration: NxJsonConfiguration;
@@ -55,6 +57,8 @@ export interface CreateNodesContext {
 /**
  * A function which parses a configuration file into a set of nodes.
  * Used for creating nodes for the {@link ProjectGraph}
+ *
+ * ** Experimental: ** these APIs may experience breaking changes outside of major versions.
  */
 export type CreateNodesFunction = (
   projectConfigurationFile: string,
@@ -66,6 +70,8 @@ export type CreateNodesFunction = (
 
 /**
  * A pair of file patterns and {@link CreateNodesFunction}
+ *
+ * ** Experimental: ** these APIs may experience breaking changes outside of major versions.
  */
 export type CreateNodes = readonly [
   projectFilePattern: string,
@@ -74,6 +80,8 @@ export type CreateNodes = readonly [
 
 /**
  * Context for {@link CreateDependencies}
+ *
+ * ** Experimental: ** these APIs may experience breaking changes outside of major versions.
  */
 export interface CreateDependenciesContext {
   /**
@@ -105,6 +113,8 @@ export interface CreateDependenciesContext {
 /**
  * A function which parses files in the workspace to create dependencies in the {@link ProjectGraph}
  * Use {@link validateDependency} to validate dependencies
+ *
+ * ** Experimental: ** these APIs may experience breaking changes outside of major versions.
  */
 export type CreateDependencies = (
   context: CreateDependenciesContext

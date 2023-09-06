@@ -2,6 +2,8 @@
 
 Context for [CreateNodesFunction](../../devkit/documents/CreateNodesFunction)
 
+** Experimental: ** these APIs may experience breaking changes outside of major versions.
+
 ## Table of contents
 
 ### Properties

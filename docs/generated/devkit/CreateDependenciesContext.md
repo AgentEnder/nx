@@ -2,6 +2,8 @@
 
 Context for [CreateDependencies](../../devkit/documents/CreateDependencies)
 
+** Experimental: ** these APIs may experience breaking changes outside of major versions.
+
 ## Table of contents
 
 ### Properties

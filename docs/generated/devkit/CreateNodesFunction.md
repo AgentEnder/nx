@@ -9,6 +9,8 @@
 A function which parses a configuration file into a set of nodes.
 Used for creating nodes for the [ProjectGraph](../../devkit/documents/ProjectGraph)
 
+** Experimental: ** these APIs may experience breaking changes outside of major versions.
+
 ##### Parameters
 
 | Name                       | Type                                                              |
