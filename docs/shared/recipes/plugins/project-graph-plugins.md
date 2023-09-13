@@ -90,14 +90,14 @@ The shape of the [`createDependencies`](/packages/devkit/documents/CreateDepende
 ```typescript
 export type CreateDependencies = (
   context: CreateDependenciesContext
-) => CandidateDependency[] | Promise<CandidateDependency[]>;
+) => RawProjectGraphDependency[] | Promise<RawProjectGraphDependency[]>;
 ```
 
 In the `createDependencies` function, you can analyze the files in the workspace and return a list of dependencies. It's up to the plugin to determine how to analyze the files. This should also be exported from the plugin's entry point, as listed in `nx.json`.
 
 Within the `CreateDependenciesContext`, you have access to the graph's external nodes, the configuration of each project in the workspace, the `nx.json` configuration from the workspace, all files in the workspace, and files that have changed since the last invocation. It's important to utilize the `filesToProcess` parameter, as this will allow Nx to only reanalyze files that have changed since the last invocation, and reuse the information from the previous invocation for files that haven't changed.
 
-`@nx/devkit` exports a function called `validateDependency` which can be used to validate a dependency. This function takes in a `CandidateDependency` and the `CreateDependenciesContext` and throws an error if the dependency is invalid. This function is called when the returned dependencies are merged with the existing project graph, but may be useful to call within your plugin to validate dependencies before returning them when debugging.
+`@nx/devkit` exports a function called `validateDependency` which can be used to validate a dependency. This function takes in a `RawProjectGraphDependency` and the `CreateDependenciesContext` and throws an error if the dependency is invalid. This function is called when the returned dependencies are merged with the existing project graph, but may be useful to call within your plugin to validate dependencies before returning them when debugging.
 
 The dependencies can be of three types:
 
