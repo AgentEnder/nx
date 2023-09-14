@@ -6,6 +6,8 @@ Performs a tree-aware glob search on the files in a workspace. Able to find newl
 created files and hides deleted files before the updates are committed to disk.
 Paths should be unix-style with forward slashes.
 
+Available from nx version 16.9.0 or later.
+
 #### Parameters
 
 | Name       | Type                                  | Description             |
