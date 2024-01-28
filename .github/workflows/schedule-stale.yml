@@ -24,6 +24,7 @@ jobs:
           days-before-stale: 14
           days-before-close: 14
           stale-issue-label: "stale"
+          exempt-issue-labels: "not-stale"
           operations-per-run: 300
           remove-stale-when-updated: true
           only-labels: "blocked: more info needed"
@@ -40,6 +41,7 @@ jobs:
           days-before-stale: 14
           days-before-close: 14
           stale-issue-label: "stale"
+          exempt-issue-labels: "not-stale"
           operations-per-run: 300
           remove-stale-when-updated: true
           only-labels: "blocked: needs rebased"
@@ -56,6 +58,7 @@ jobs:
           days-before-stale: 14
           days-before-close: 14
           stale-issue-label: "stale"
+          exempt-issue-labels: "not-stale"
           operations-per-run: 300
           remove-stale-when-updated: true
           only-labels: "blocked: repro needed"
@@ -72,6 +75,7 @@ jobs:
           days-before-stale: 14
           days-before-close: 14
           stale-issue-label: "stale"
+          exempt-issue-labels: "not-stale"
           operations-per-run: 300
           remove-stale-when-updated: true
           only-labels: "blocked: retry with latest"
@@ -89,6 +93,7 @@ jobs:
           days-before-stale: 180
           days-before-close: 14
           stale-issue-label: "stale"
+          exempt-issue-labels: "not-stale"
           operations-per-run: 300
           remove-stale-when-updated: true
           only-labels: "type: bug"
@@ -105,6 +110,7 @@ jobs:
           days-before-stale: 180
           days-before-close: 14
           stale-issue-label: "stale"
+          exempt-issue-labels: "not-stale"
           operations-per-run: 300
           remove-stale-when-updated: true
           only-labels: "type: cleanup"
@@ -121,6 +127,7 @@ jobs:
           days-before-stale: 180
           days-before-close: 14
           stale-issue-label: "stale"
+          exempt-issue-labels: "not-stale"
           operations-per-run: 300
           remove-stale-when-updated: true
           only-labels: "type: docs"
@@ -137,6 +144,7 @@ jobs:
           days-before-stale: 250
           days-before-close: 14
           stale-issue-label: "stale"
+          exempt-issue-labels: "not-stale"
           operations-per-run: 300
           remove-stale-when-updated: true
           only-labels: "type: enhancement"
@@ -153,6 +161,7 @@ jobs:
           days-before-stale: 250
           days-before-close: 14
           stale-issue-label: "stale"
+          exempt-issue-labels: "not-stale"
           operations-per-run: 300
           remove-stale-when-updated: true
           only-labels: "type: feature"
@@ -169,6 +178,7 @@ jobs:
           days-before-stale: 45
           days-before-close: 14
           stale-issue-label: "stale"
+          exempt-issue-labels: "not-stale"
           operations-per-run: 300
           remove-stale-when-updated: true
           only-labels: "type: question / discussion"
