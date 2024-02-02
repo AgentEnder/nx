@@ -235,7 +235,7 @@ pub fn nx_fork(
     quiet: bool,
 ) -> napi::Result<ChildProcess> {
     run_command(
-        format!("node {} {} {}", fork_script, psuedo_ipc_path, id),
+        format!("node \"{}\" {} {}", fork_script, psuedo_ipc_path, id),
         command_dir,
         js_env,
         Some(quiet),
