@@ -10,6 +10,7 @@ import {
   mergeTargetConfigurations,
   readProjectConfigurationsFromRootMap,
   readTargetDefaultsForTarget,
+  resolveNxTokensInOptions,
 } from './project-configuration-utils';
 
 describe('project-configuration-utils', () => {
@@ -442,6 +443,154 @@ describe('project-configuration-utils', () => {
           }
         );
         expect(result.cache).not.toBeDefined();
+      });
+    });
+
+    describe('resolveNxTokensInOptions', () => {
+      it('should resolve {workspaceRoot} in options', () => {
+        const options = {
+          path: '{workspaceRoot}/proj',
+        };
+        const interpolated = resolveNxTokensInOptions(
+          options,
+          {
+            name: 'proj',
+            root: 'proj',
+            targets: {
+              build: {
+                executor: 'nx:run-commands',
+                options,
+              },
+            },
+          },
+          'proj.build'
+        );
+
+        expect(interpolated.path).toEqual('proj');
+      });
+
+      it('should resolve {projectRoot} in options', () => {
+        const options = {
+          path: '{projectRoot}/src',
+        };
+        const interpolated = resolveNxTokensInOptions(
+          options,
+          {
+            name: 'proj',
+            root: 'libs/proj',
+            targets: {
+              build: {
+                executor: 'nx:run-commands',
+                options,
+              },
+            },
+          },
+          'proj.build'
+        );
+
+        expect(interpolated.path).toEqual('libs/proj/src');
+      });
+
+      it('should resolve {projectName} in options', () => {
+        const options = {
+          path: '{projectName}/src',
+        };
+        const interpolated = resolveNxTokensInOptions(
+          options,
+          {
+            name: 'proj',
+            root: 'libs/proj',
+            targets: {
+              build: {
+                executor: 'nx:run-commands',
+                options,
+              },
+            },
+          },
+          'proj.build'
+        );
+
+        expect(interpolated.path).toEqual('proj/src');
+      });
+
+      it('should handle tokens in nested objects', () => {
+        const options = {
+          nested: {
+            path: '{projectRoot}/src',
+          },
+        };
+        const interpolated = resolveNxTokensInOptions(
+          options,
+          {
+            name: 'proj',
+            root: 'libs/proj',
+            targets: {
+              build: {
+                executor: 'nx:run-commands',
+                options,
+              },
+            },
+          },
+          'proj.build'
+        );
+
+        expect(interpolated.nested.path).toEqual('libs/proj/src');
+      });
+
+      it('should throw sensible error if {workspaceRoot} is not at the beginning', () => {
+        expect(() =>
+          resolveNxTokensInOptions(
+            {
+              nested: [
+                {
+                  path: 'proj/{workspaceRoot}',
+                },
+              ],
+            },
+            {
+              name: 'proj',
+              root: 'proj',
+              targets: {
+                build: {
+                  executor: 'nx:run-commands',
+                  options: {
+                    path: 'proj/{workspaceRoot}',
+                  },
+                },
+              },
+            },
+            'proj.build'
+          )
+        ).toThrowErrorMatchingInlineSnapshot(`
+          "Error interpolating values in proj proj.build.nested.0.path: Output 'proj/{workspaceRoot}' is invalid. {workspaceRoot} can only be used at the beginning of the expression.
+
+          Error: Output 'proj/{workspaceRoot}' is invalid. {workspaceRoot} can only be used at the beginning of the expression.
+              at interpolate (/root/nx/packages/nx/src/utils/interpolate.ts:18:11)
+              at interpolateWithNxTokens (/root/nx/packages/nx/src/utils/interpolate.ts:8:10)
+              at resolveNxTokensInOptions (/root/nx/packages/nx/src/project-graph/utils/project-configuration-utils.ts:807:46)
+              at resolveNxTokensInOptions (/root/nx/packages/nx/src/project-graph/utils/project-configuration-utils.ts:814:21)
+              at resolveNxTokensInOptions (/root/nx/packages/nx/src/project-graph/utils/project-configuration-utils.ts:814:21)
+              at /root/nx/packages/nx/src/project-graph/utils/project-configuration-utils.spec.ts:542:35
+              at _toThrowErrorMatchingSnapshot (/root/nx/node_modules/.pnpm/jest-snapshot@29.5.0/node_modules/jest-snapshot/build/index.js:566:7)
+              at Object.toThrowErrorMatchingInlineSnapshot (/root/nx/node_modules/.pnpm/jest-snapshot@29.5.0/node_modules/jest-snapshot/build/index.js:507:10)
+              at __EXTERNAL_MATCHER_TRAP__ (/root/nx/node_modules/.pnpm/expect@29.5.0/node_modules/expect/build/index.js:317:30)
+              at Object.throwingMatcher [as toThrowErrorMatchingInlineSnapshot] (/root/nx/node_modules/.pnpm/expect@29.5.0/node_modules/expect/build/index.js:318:15)
+              at Object.<anonymous> (/root/nx/packages/nx/src/project-graph/utils/project-configuration-utils.spec.ts:564:11)
+              at Promise.then.completed (/root/nx/node_modules/.pnpm/jest-circus@29.5.0/node_modules/jest-circus/build/utils.js:293:28)
+              at new Promise (<anonymous>)
+              at callAsyncCircusFn (/root/nx/node_modules/.pnpm/jest-circus@29.5.0/node_modules/jest-circus/build/utils.js:226:10)
+              at _callCircusTest (/root/nx/node_modules/.pnpm/jest-circus@29.5.0/node_modules/jest-circus/build/run.js:297:40)
+              at async _runTest (/root/nx/node_modules/.pnpm/jest-circus@29.5.0/node_modules/jest-circus/build/run.js:233:3)
+              at async _runTestsForDescribeBlock (/root/nx/node_modules/.pnpm/jest-circus@29.5.0/node_modules/jest-circus/build/run.js:135:9)
+              at async _runTestsForDescribeBlock (/root/nx/node_modules/.pnpm/jest-circus@29.5.0/node_modules/jest-circus/build/run.js:130:9)
+              at async _runTestsForDescribeBlock (/root/nx/node_modules/.pnpm/jest-circus@29.5.0/node_modules/jest-circus/build/run.js:130:9)
+              at async _runTestsForDescribeBlock (/root/nx/node_modules/.pnpm/jest-circus@29.5.0/node_modules/jest-circus/build/run.js:130:9)
+              at async run (/root/nx/node_modules/.pnpm/jest-circus@29.5.0/node_modules/jest-circus/build/run.js:68:3)
+              at async runAndTransformResultsToJestFormat (/root/nx/node_modules/.pnpm/jest-circus@29.5.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+              at async jestAdapter (/root/nx/node_modules/.pnpm/jest-circus@29.5.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+              at async runTestInternal (/root/nx/node_modules/.pnpm/jest-runner@29.5.0/node_modules/jest-runner/build/runTest.js:367:16)
+              at async runTest (/root/nx/node_modules/.pnpm/jest-runner@29.5.0/node_modules/jest-runner/build/runTest.js:444:34)"
+        `);
       });
     });
   });

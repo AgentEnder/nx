@@ -1,5 +1,6 @@
 import { ProjectGraph, ProjectGraphProjectNode } from '../config/project-graph';
-import { getDependencyConfigs, getOutputs, interpolate } from './utils';
+import { getDependencyConfigs, getOutputs } from './utils';
+import { interpolateWithNxTokens } from '../utils/interpolate';
 import {
   projectHasTarget,
   projectHasTargetAndConfiguration,
@@ -420,10 +421,7 @@ function interpolateOverrides<T = any>(
   Object.entries(interpolatedArgs).forEach(([name, value]) => {
     interpolatedArgs[name] =
       typeof value === 'string'
-        ? interpolate(value, {
-            workspaceRoot: '',
-            projectRoot: project.root,
-            projectName: project.name,
+        ? interpolateWithNxTokens(value, project, {
             project: { ...project, name: projectName }, // this is legacy
           })
         : value;

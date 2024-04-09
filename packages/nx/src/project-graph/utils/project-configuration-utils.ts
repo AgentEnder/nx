@@ -8,6 +8,7 @@ import { NX_PREFIX } from '../../utils/logger';
 import { CreateNodesResult, LoadedNxPlugin } from '../../utils/nx-plugin';
 import { readJsonFile } from '../../utils/fileutils';
 import { workspaceRoot } from '../../utils/workspace-root';
+import { interpolateWithNxTokens } from '../../utils/interpolate';
 import {
   ONLY_MODIFIES_EXISTING_TARGET,
   OVERRIDE_SOURCE_FILE,
@@ -802,17 +803,13 @@ export function resolveNxTokensInOptions<T extends Object | Array<unknown>>(
   const result: T = Array.isArray(object) ? ([...object] as T) : { ...object };
   for (let [opt, value] of Object.entries(object ?? {})) {
     if (typeof value === 'string') {
-      const workspaceRootMatch = /^(\{workspaceRoot\}\/?)/.exec(value);
-      if (workspaceRootMatch?.length) {
-        value = value.replace(workspaceRootMatch[0], '');
-      }
-      if (value.includes('{workspaceRoot}')) {
+      try {
+        result[opt] = interpolateWithNxTokens(value, project);
+      } catch (e) {
         throw new Error(
-          `${NX_PREFIX} The {workspaceRoot} token is only valid at the beginning of an option. (${key})`
+          `Error interpolating values in ${project.name} ${key}.${opt}: ${e.message}\n\n${e.stack}`
         );
       }
-      value = value.replace(/\{projectRoot\}/g, project.root);
-      result[opt] = value.replace(/\{projectName\}/g, project.name);
     } else if (typeof value === 'object' && value) {
       result[opt] = resolveNxTokensInOptions(
         value,

@@ -3,7 +3,7 @@ import { prerelease } from 'semver';
 import { ProjectGraph } from '../../../config/project-graph';
 import { Tree } from '../../../generators/tree';
 import { createFileMapUsingProjectGraph } from '../../../project-graph/file-map-utils';
-import { interpolate } from '../../../tasks-runner/utils';
+import { interpolate } from '../../../utils/interpolate';
 import { output } from '../../../utils/output';
 import type { ReleaseGroupWithName } from '../config/filter-release-groups';
 import { GitCommit, gitAdd, gitCommit } from './git';

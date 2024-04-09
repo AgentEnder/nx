@@ -14,6 +14,7 @@ import { splitByColons } from '../utils/split-target';
 import { getExecutorInformation } from '../command-line/run/executor-utils';
 import { CustomHasher, ExecutorConfig } from '../config/misc-interfaces';
 import { readProjectsConfigurationFromProjectGraph } from '../project-graph/project-graph';
+import { interpolate, interpolateWithNxTokens } from '../utils/interpolate';
 
 export function getCommandAsString(execCommand: string, task: Task) {
   const args = getPrintableCommandArgsForTask(task);
@@ -189,9 +190,7 @@ export function getOutputsForTargetAndConfiguration(
 
     return targetConfiguration.outputs
       .map((output: string) => {
-        return interpolate(output, {
-          projectRoot: node.data.root,
-          projectName: node.name,
+        return interpolateWithNxTokens(output, node.data, {
           project: { ...node.data, name: node.name }, // this is legacy
           options,
         });
@@ -217,38 +216,6 @@ export function getOutputsForTargetAndConfiguration(
   } else {
     return [];
   }
-}
-
-export function interpolate(template: string, data: any): string {
-  if (template.includes('{workspaceRoot}', 1)) {
-    throw new Error(
-      `Output '${template}' is invalid. {workspaceRoot} can only be used at the beginning of the expression.`
-    );
-  }
-
-  if (data.projectRoot == '.' && template.includes('{projectRoot}', 1)) {
-    throw new Error(
-      `Output '${template}' is invalid. When {projectRoot} is '.', it can only be used at the beginning of the expression.`
-    );
-  }
-
-  let res = template.replace('{workspaceRoot}/', '');
-
-  if (data.projectRoot == '.') {
-    res = res.replace('{projectRoot}/', '');
-  }
-
-  return res.replace(/{([\s\S]+?)}/g, (match: string) => {
-    let value = data;
-    let path = match.slice(1, -1).trim().split('.');
-    for (let idx = 0; idx < path.length; idx++) {
-      if (!value[path[idx]]) {
-        return match;
-      }
-      value = value[path[idx]];
-    }
-    return value;
-  });
 }
 
 export function getTargetConfigurationForTask(

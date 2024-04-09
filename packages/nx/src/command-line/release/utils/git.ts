@@ -2,7 +2,7 @@
  * Special thanks to changelogen for the original inspiration for many of these utilities:
  * https://github.com/unjs/changelogen
  */
-import { interpolate } from '../../../tasks-runner/utils';
+import { interpolate } from '../../../utils/interpolate';
 import { execCommand } from './exec-command';
 
 export interface GitCommitAuthor {

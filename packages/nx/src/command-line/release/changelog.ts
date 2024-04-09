@@ -16,7 +16,7 @@ import { FsTree, Tree } from '../../generators/tree';
 import { registerTsProject } from '../../plugins/js/utils/register';
 import { createProjectFileMapUsingProjectGraph } from '../../project-graph/file-map-utils';
 import { createProjectGraphAsync } from '../../project-graph/project-graph';
-import { interpolate } from '../../tasks-runner/utils';
+import { interpolate, interpolateWithNxTokens } from '../../utils/interpolate';
 import { isCI } from '../../utils/is-ci';
 import { output } from '../../utils/output';
 import { handleErrors } from '../../utils/params';
@@ -886,11 +886,7 @@ async function generateChangelogForProjects(
       repoSlug: githubRepoSlug,
       entryWhenNoChanges:
         typeof config.entryWhenNoChanges === 'string'
-          ? interpolate(config.entryWhenNoChanges, {
-              projectName: project.name,
-              projectRoot: project.data.root,
-              workspaceRoot: '', // within the tree, workspaceRoot is the root
-            })
+          ? interpolateWithNxTokens(config.entryWhenNoChanges, project.data)
           : false,
       changelogRenderOptions: config.renderOptions,
       conventionalCommitsConfig: nxReleaseConfig.conventionalCommits,
