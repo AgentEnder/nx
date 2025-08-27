@@ -13,6 +13,8 @@ if (!prTitle) {
   process.exit(1);
 }
 
+// some foo
+
 console.log('🐟🐟🐟 Validating PR title 🐟🐟🐟');
 console.log(`PR title: ${prTitle}`);
 
